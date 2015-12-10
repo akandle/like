@@ -10,18 +10,8 @@ var theAccount = {
   "password": "test"
 };
 
-var login = function (request, done) {
-  request
-    .post('/api/login')
-    .send(theAccount)
-    .end(function (err, res) {
-      if (err) {
-        throw err;
-      }
-      agent.saveCookies(res);
-      done(agent);
-    });
-};
+//TODO pending tests for logged users for browse and vote
+
 
 describe('Authentication', function() {
   describe('Log In', function () {
@@ -44,40 +34,38 @@ describe('Authentication', function() {
         .post('/api/signin')
         .send({username: 'John', password: 'test'})
         .end(function(err, res) {
-          console.log('response object: ',res);
+          done();
         });
     });
   });
-})
-// var request = require('supertest')(app);
-// var login = require('./login');
 
-describe('MyApp', function () {
 
-  var agent;
+  describe('Log Out', function () {
+    it('should not allow access to /api/browse if not logged in', function (done) {
+      request(server)
+        .post('/api/browse')
+        .expect(401, done);
+    });
 
-  before(function (done) {
-    login(request, function (loginAgent) {
-      agent = loginAgent;
-      done();
+   xit('should allow access to /api/browse if logged in', function (done) {
+      request(server)
+        .post('/api/signin')
+        .send({username: 'John', password: 'test'})
+        .end();
+      request(server)
+        .post('/api/browse')
+        .expect(200, done);
+    });
+
+     it('should not allow access to /api/vote if not logged in', function (done) {
+      request(server)
+        .post('/api/vote')
+        .expect(401, done);
+    });
+     xit('should allow access to /api/vote if logged in', function (done) {
+      request(server)
+        .post('/api/vote')
+        .expect(401, done);
     });
   });
-
-  it('should allow access to admin when logged in', function (done) {
-    var req = request.get('/api/browse');
-    agent.attachCookies(req);
-    req.expect(200, done);
-  });
-
 });
-
-//   describe('Log Out', function () {
-
-//     it('should destroy existing passport session', function (done) {
-//     });
-//     it('should destroy existing express session', function (done) {
-//     });
-//     it('should redirect to /api/signin', function (done) {
-//     });
-//   });
-// });
