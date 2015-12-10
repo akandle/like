@@ -1,27 +1,40 @@
 var morgan = require('morgan');
 var express = require('express');
 var body_parser = require('body-parser');
-// var profileAPI = require('/profileAPI.js');
-
+var passport = require('./controllers/passport');
+var cookieParser = require('cookie-parser');
+var expressSession = require('express-session');
 var app = express();
 
 
-// var router = express.Router();
-
-
-//   var authRouter = express.Router();
-//   var voteRouter = express.Router();
-//   var profileRouter = express.Router();
+/////////////////// Serving Assets | Configuring MiddleWare //////////////////
 
   app.use(morgan('dev'));
+  app.use(cookieParser());
   app.use(body_parser.urlencoded({extended : true}));
   app.use(body_parser.json());
+  app.use(expressSession({ secret: 'ABS', cookie: {}}));
+  app.use(passport.initialize());
+  app.use(passport.session());
   app.use(express.static('public'));
 
-  // router.get('/api', profileAPI)
+//////////////////////////// API Endpoints //////////////////////////////////
+
+
+  app.post('/api/signin', function(req, res, next) {
+              console.log('posted username ', req.body);
+               passport.authenticate('local', function( err, user, info ) {
+                console.log('user is: ', user);
+                if(user === false) {
+                  res.redirect('/api/signin');
+                } else {
+                  req.session.userId = user.id;
+                  res.sendStatus(200);
+                }
+               })(req, res, next);
+             });
 
   app.use('/api/profile/:id', function (request, response) {
-    console.log(request.params.id);
     if (request.params.id  == 20) {
       response.sendStatus(200);
     } else {
@@ -29,20 +42,36 @@ var app = express();
     }
   });
 
+  //Temporary 200 pending further configuration
   app.use('/api/browse', function (request, response) {
+    console.log('req.session', request.session);
      response.sendStatus(200);
   });
 
+  //Temporary 200 pending further configuration
   app.use('/api/signin', function(req, res){
-    //Initializing response to 200 pending passport integration
     res.sendStatus(200);
   });
 
-  app.use('/api/signout', function(req, res){
-    //Initializing response to 200 pending passport integration
-    res.sendStatus(200);
+  app.post('/api/signout', function(req, res){
+    // Initializing response to 200 pending passport integration
+
+    // To remove req.user and destroy the passport session
+    req.logout();
+
+    // Destroying express session
+    req.session.destroy();
+
+    // Ensuring user is logged out of passport
+    console.log('cookie: ', req.session);
+    if(req.session) {
+      console.log('didnt work sucker');
+    } else {
+      console.log('worked sucker');
+    }
+    res.redirect('/api/signin');
   });
-  
+
   app.use('/api/user/create', function(req, res){
     res.sendStatus(200);
   });
@@ -51,5 +80,10 @@ var app = express();
     res.sendStatus(200);
   });
 
+  app.use('/', function( req, res ){
+    res.sendStatus(200);
+  });
+
+//Server SetUp
 app.listen(3333);
 module.exports = app;

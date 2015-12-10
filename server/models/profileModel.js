@@ -22,6 +22,6 @@ var Profile = db.define('profile', {
 });
 
 //TODO: create relationships before running sync
-Profile.sync({force: true});
+Profile.sync();
 
 module.exports = Profile;
