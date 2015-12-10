@@ -31,10 +31,12 @@ passport.use(new LocalStrategy(
  ));
 
 passport.serializeUser(function(user, callback) {
-  cb(null, user.dataValues);
+  console.log('in serialize: ', user);
+  callback(null, user.id);
 });
 
 passport.deserializeUser(function(id, cb) {
+  console.log('in deserialize: ', id);
   User.findById(id).then(function(user, err) {
     cb(null, user);
   });

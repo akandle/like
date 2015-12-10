@@ -6,6 +6,8 @@ var cookieParser = require('cookie-parser');
 var expressSession = require('express-session');
 var app = express();
 
+require('passport');
+
 
 /////////////////// Serving Assets | Configuring MiddleWare //////////////////
 
@@ -22,13 +24,21 @@ var app = express();
 
 
   app.post('/api/signin', function(req, res, next) {
-              console.log('posted username ', req.body);
+              console.log('req object contains session: ', req.session);
+              console.log('req object contains passport: ', req.session.passport);
                passport.authenticate('local', function( err, user, info ) {
                 console.log('user is: ', user);
                 if(user === false) {
                   res.redirect('/api/signin');
                 } else {
-                  req.session.userId = user.id;
+                  req.login(user.dataValues, function(err) {
+                    if(err) {
+                      console.log('Error: ', err);
+                    } else {
+                      console.log('Passport session object: ', req.session.passport);
+                      console.log('req.user exists: ', req.user);
+                    }
+                  });
                   res.sendStatus(200);
                 }
                })(req, res, next);

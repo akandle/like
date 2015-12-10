@@ -20,12 +20,11 @@ describe('Authentication', function() {
           .expect(302, done); //TODO: Add in check of return value
     });
 
-    it('should create new session', function (done) {
+    it('should create new session', function (done) { //TODO: Login and get browse, logout and get browse, unlogged in ever get browse
       request(server)
         .post('/api/signin')
         .send({username: 'John', password: 'test'})
         .end(function(err, res) {
-          
         });
     });
   });
