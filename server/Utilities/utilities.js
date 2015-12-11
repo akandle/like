@@ -3,18 +3,28 @@ var Profile = require('../models/profileModel');
 var Promise = require('bluebird');
 
 module.exports.checkPassword = function(userid, password) {
-  this.getProfile(userid).then(function(user){
-    console.log(user);
-  });
+  this.getProfile(userid)
+      .then(function(user){
+
+      });
 };
 
+module.exports.storePassword = function() {
+
+}
+
 module.exports.getProfile = function (userid) {
-  Profile.findById(userid).then(function(user){
-    if (!user) {
-      console.log('Error');
-    }
-    return new Promise(function(resolve) {
-      resolve(user);
+  return new Promise(function(resolve, reject){
+    Profile.findById(userid).then(function(user){
+      if (!user) {
+        throw new Error("User not found");
+      } else {
+        resolve(user);
+      }
     });
   });
 };
+
+function hashPassword (password, salt) {
+
+}
