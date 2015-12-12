@@ -75,20 +75,25 @@ var isAuthorized = function(req, res, next){
   });
 
   app.post('/api/profile/create', function(req, res){
-    console.log('username', req.body.username);
-    Profile.create({username  : req.body.username,
-                    password  : req.body.password,
-                    firstName : req.body.firstName,
-                    lastName  : req.body.lastName,
-                    email     : req.body.email
-                  })
-    .then(function() {
-      console.log('User created');
-      res.sendStatus(200);
+    Profile.find({where:{username: req.body.username}}).then(function(user){
+      if (user !== null){
+        res.sendStatus(451);
+      } else {
+        Profile.create({username  : req.body.username,
+          password  : req.body.password,
+          firstName : req.body.firstName,
+          lastName  : req.body.lastName,
+          email     : req.body.email
+        })
+        .then(function() {
+          console.log('User created');
+          res.sendStatus(200);
+        })
+        .catch(function(err) {
+          console.log('Error in creation: ', err);
+        });
+      }
     })
-    .catch(function(err) {
-      console.log('Error in creation: ', err);
-    });
   });
 
   app.use('/api/vote', isAuthorized, function (req, res){

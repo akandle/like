@@ -71,14 +71,20 @@ describe('Authentication', function() {
   });
 
   describe('Create User', function() {
+    this.timeout(5000);
     afterEach(function (done) {
       Profile.destroy({where: {username: 'Bob12'}})
-             .then(function() {
-               done();
-             })
              .catch(function(err) {
               console.log('Create Spec error: ', err);
              });
+     Profile.destroy({where: {username: 'Frank12'}})
+            .then(function() {
+              done();
+            })
+            .catch(function(err) {
+             console.log('Create Spec error: ', err);
+            });
+
     });
 
     it('should add a user to the database', function (done) {
@@ -94,7 +100,6 @@ describe('Authentication', function() {
         .post('/api/profile/create')
         .send(userA)
         .end(function(err, res) {
-          console.log('error in authspec find user ', err);
         Profile.find({where : {username: 'Bob12'}})
                .then(function(user) {
                 console.log('user found');
@@ -106,18 +111,6 @@ describe('Authentication', function() {
         });
     });
 
-    before(function(done) {
-      var userB = {
-        username: 'Frank12',
-        password: 'test2',
-        firstName: 'Frank',
-        lastName: 'Willy',
-        email: 'fwilly@france.gov'
-      };
-
-      Profile.create(userB);
-    });
-
     it('should not allow for non-unique username', function(done) {
       var userB = {
         username: 'Frank12',
@@ -127,10 +120,12 @@ describe('Authentication', function() {
         email: 'fwilly@france.gov'
       };
 
-      request(server)
-            .post('/api/profile/create')
-            .send(userB)
-            .expect(451);
+      Profile.create(userB).then(function() {
+        request(server)
+              .post('/api/profile/create')
+              .send(userB)
+              .expect(451, done);
+      });
     });
   });
 });

@@ -28,3 +28,6 @@ module.exports.getProfile = function (userid) {
 function hashPassword (password, salt) {
 
 }
+
+// To Notes: When reading source code, start with only the functions
+//           you're intending to use. Ignore complexity.
