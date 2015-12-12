@@ -48,7 +48,7 @@ var isAuthorized = function(req, res, next){
 
 
   //Temporary 200 pending further configuration
-  app.use('/api/browse', isAuthorized, function (req, res) {
+  app.use('/api/browse', util.isAuthorized, function (req, res) {
     res.sendStatus(200);
   });
 
@@ -79,7 +79,7 @@ var isAuthorized = function(req, res, next){
             util.checkUsername,
             util.createUser);
 
-  app.use('/api/vote', isAuthorized, function (req, res){
+  app.use('/api/vote', util.isAuthorized, function (req, res){
     res.sendStatus(200);
   });
 

@@ -125,13 +125,15 @@ describe('Authentication', function() {
         email: 'fwilly@france.gov'
       };
 
-      Profile.create(userB).then(function() {
-        request(server)
-              .post('/api/profile/create')
-              .send(userB)
-              .expect(589, done);
-      });
-      done();
+      Profile.create(userB)
+        .then(function() {
+          request(server)
+                .post('/api/profile/create')
+                .send(userB)
+                .expect(451, done);
+        })
+        .catch(done);
+      // done();
     });
   });
 });
