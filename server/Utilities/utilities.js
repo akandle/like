@@ -10,8 +10,8 @@ module.exports.checkPassword = function(userid, password) {
 };
 
 module.exports.storePassword = function() {
-
-}
+  console.log('testing, nothing to see here');
+};
 
 module.exports.getProfile = function (userid) {
   return new Promise(function(resolve, reject){
