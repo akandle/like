@@ -71,7 +71,6 @@ describe('Authentication', function() {
   });
 
   describe('Create User', function() {
-    this.timeout(5000);
     afterEach(function (done) {
       Profile.destroy({where: {username: 'Bob12'}})
              .then(function() {
@@ -91,13 +90,6 @@ describe('Authentication', function() {
         email: 'bfremont@usa.gov'
       };
 
-      var userB = {
-        username: 'Frank12',
-        password: 'test2',
-        firstName: 'Frank',
-        lastName: 'Willy',
-        email: 'fwilly@france.gov'
-      };
       request(server)
         .post('/api/profile/create')
         .send(userA)
@@ -112,6 +104,33 @@ describe('Authentication', function() {
                  done();
                });
         });
+    });
+
+    before(function(done) {
+      var userB = {
+        username: 'Frank12',
+        password: 'test2',
+        firstName: 'Frank',
+        lastName: 'Willy',
+        email: 'fwilly@france.gov'
+      };
+
+      Profile.create(userB);
+    });
+
+    it('should not allow for non-unique username', function(done) {
+      var userB = {
+        username: 'Frank12',
+        password: 'test2',
+        firstName: 'Frank',
+        lastName: 'Willy',
+        email: 'fwilly@france.gov'
+      };
+
+      request(server)
+            .post('/api/profile/create')
+            .send(userB)
+            .expect(451);
     });
   });
 });
