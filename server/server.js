@@ -17,45 +17,42 @@ var app = express();
 
 /////////////////// Serving Assets | Configuring MiddleWare //////////////////
 
-  app.use(morgan('dev'));
-  app.use(cookieParser());
-  app.use(body_parser.urlencoded({extended : true}));
-  app.use(body_parser.json());
-  app.use(expressSession({ secret: 'ABS', cookie: {}}));
-  app.use(passport.initialize());
-  app.use(passport.session());
-  app.use(express.static('public'));
+app.use(morgan('dev'));
+app.use(cookieParser());
+app.use(body_parser.urlencoded({extended : true}));
+app.use(body_parser.json());
+app.use(expressSession({ secret: 'ABS', cookie: {}}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static('public'));
 
 //////////////////////// API Endpoints ////////////////////////////
 
-  app.post('/api/signin', function(req, res, next) {
-  console.log('in SignIn Route, passport is :', req.session.passport);
-  console.log('request user: ', req.user);
-  console.log('request session: ', req.session);
-    util.authenticateUser(req, res, next, passport);
-  });
+app.post('/api/signin', function(req, res, next) {
+  util.authenticateUser(req, res, next, passport);
+});
 
-  //TODO : add more to route, only checking to see if user is authenticated
-  app.use('/api/browse', util.isAuthorized, function(req, res) {
-    res.sendStatus(200);
-  });
+//TODO : add more to route, only checking to see if user is authenticated
+app.use('/api/browse', util.isAuthorized, function(req, res) {
+  res.sendStatus(200);
+});
 
-  app.post('/api/signout', util.signUserOut);
+app.post('/api/signout', util.signUserOut);
 
-  app.post('/api/profile/create', util.checkUsername, util.createUser);
+app.post('/api/profile/create', util.checkUsername, util.createUser);
 
-  //TODO : add more to route, only checking to see if user is authenticated
-  app.use('/api/vote', util.isAuthorized, function(req, res) {
-    res.sendStatus(200);
-  });
+//TODO : add more to route, only checking to see if user is authenticated
+app.use('/api/vote', util.isAuthorized, function(req, res) {
+  res.sendStatus(200);
+});
 
-  app.use('/api/profile/:id', util.isAuthorized, function (req, res) {
-    res.sendStatus(200);
-  });
+app.use('/api/profile/:id', util.isAuthorized, function (req, res) {
+  res.sendStatus(200);
+});
 
-  app.use('/', function( req, res ){
-    res.sendStatus(200);
-  });
+app.use('/', function( req, res ){
+  res.sendStatus(200);
+});
 
 //Server SetUp
 app.listen(3333);

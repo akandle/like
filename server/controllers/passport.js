@@ -5,29 +5,24 @@ var util = require('../Utilities/utilities')
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    console.log('In passport, username is', username)
-    console.log('In passport, password is', password)
     util.getProfile(username, null)
-        .then(function(user) {
-            console.log('in Passport, user is...', user);
-            if ( user === null ) {
-              console.log('no user found');
-              return done( null, false, { message : 'Incorrect username' } );
-            } else if (!util.checkPassword( username, password )) {
-              console.log('Password is good')
-              return done( null, false, { message : 'Incorrect password.'});
-            } else {
-              return done( null, user );
-            }
-         })
-         .catch(function(err){
-           if ( err ) {
-             console.log('Error');
-             return err;
-           }
-         })
+      .then(function(user) {
+        if ( user === null ) {
+          return done( null, false, { message : 'Incorrect username' } );
+        } else if (!util.checkPassword( username, password )) {
+          return done( null, false, { message : 'Incorrect password.'});
+        } else {
+          return done( null, user );
+        }
+      })
+      .catch(function(err){
+        if ( err ) {
+          console.log('Error');
+          return err;
+        }
+      });
   }
- ));
+));
 
 passport.serializeUser(function(user, callback) {
   callback(null, user.id);
@@ -36,7 +31,6 @@ passport.serializeUser(function(user, callback) {
 passport.deserializeUser(function(id, cb) {
   User.findById(id)
     .then(function(user, err) {
-      console.log('Deserializing user');
       cb(null, user);
     })
     .catch(function(err) {
