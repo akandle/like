@@ -2,26 +2,53 @@ var Profile = require('../models/profileModel');
 var Promise = require('bluebird');
 var bcrypt = Promise.promisifyAll(require('bcrypt'));
 
+///////////// Authentication Related Utilities //////////////
+module.exports.authenticateUser = function (req, res, next, passport) {
+  passport.authenticate('local', function( err, user, info ) {
+   if(user === false) {
+    console.log('redirecting because user is false');
+     res.redirect('/api/signin');
+   } else {
+    req.login(user.dataValues, function(err) {
+      console.log('WE ARE LOGGING IN');
+     if(err) {
+       console.log('Error: ---', err);
+     }
+    });
+    console.log('In authenticateUser ', req.session.passport);
+    console.log('Util authenticate request user: ', req.user);
+    console.log('Util authenticate request session: ', req.session);
+    res.sendStatus(200);
+   }
+  })(req, res, next);
+};
+
+module.exports.isAuthorized = function(req, res, next){
+  console.log('In isAuthorized ', req.session.passport);
+  console.log('Util is authorized request user: ', req.user);
+  console.log('Util is authorized request session: ', req.session);
+  if (req.isAuthenticated()) {
+     next();
+    } else {
+      res.sendStatus(401);
+    }
+};
+
+
 ////////////////// User Related Utilities //////////////////
-module.exports.getProfile = function (username) {
-  return new Promise(function(resolve, reject){
-    Profile.find({ where : { username : username }})
-           .then(function(user){
-              if (!user) {
-                throw new Error("User not found");
-              } else {
-                resolve(user);
-              }
-           });
-  });
+module.exports.getProfile = function (username, userid) {
+  console.log('in getProfile, username is ', username)
+  if (userid !== null) {
+    return Profile.find({ where : { id : userid }});
+  } else {
+    return Profile.find({ where : { username : username }});
+  }
 };
 
 module.exports.checkUsername = function (req, res, next) {
   var username = req.body.username;
-  console.log('Finding in checkUsername. User is ',username);
   Profile.find({ where: { username : username }})
         .then(function(user) {
-          console.log('Found, user is ', user);
           if(user === null) {
             next();
           } else {
@@ -34,11 +61,9 @@ module.exports.checkUsername = function (req, res, next) {
 };
 
 module.exports.createUser = function (req, res) {
-  console.log('inside create user');
   var username = req.body.username;
   var password = req.body.password;
 
-  console.log('user and pass: ', username, ' ', password);
   var userObj = {
     username  : username,
     password  : password,
@@ -49,127 +74,73 @@ module.exports.createUser = function (req, res) {
 
   hashPassword(username, password)
     .then(function(hash){
-      console.log('Password has been hashed, it is:', hash);
-      // console.log('#1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
       userObj.password = hash;
-      console.log('user object', userObj);
       return userObj;
     })
     .then(function(user) {
-      console.log('User incomeing to create: ', user);
-
       return Profile.create(user)
         .then(function(user) {
           return user;
         });
     })
-    // .then(Profile.create(user))
     .then(function(user) {
-      console.log('incoming user to req.login: ', user);
       req.login(user.dataValues, function(err) {
         if(err) {
-          // console.log('Error: ---', err);
-          throw new Error('I dont know');
+          throw new Error('Error in logging in user...', err);
         }
       });
-      res.sendStatus(200); //next()
+      res.sendStatus(200);
     })
     .catch(function(err){
-      console.log('Error: ',err);
+      console.log('Error in creating User... ',err);
       res.send(451);
     });
+};
+
+module.exports.signUserOut = function (req, res, next) {
+  // To remove req.user and destroy the passport session
+  req.logout();
+
+  // Destroying express session
+  req.session.destroy();
+
+  // Ensuring user is logged out of passport
+  // if(req.session) {
+  //   console.log('didnt work sucker');
+  // } else {
+  //   console.log('worked sucker');
+  // }
+  res.sendStatus(204);
 };
 
 
 ///////////////// Password Related Utilities ////////////////
 module.exports.checkPassword = function(username, password) {
-  return this.getProfile(username)
+  console.log('In checkPassword');
+  return this.getProfile(username, null)
     .then(function(user){
       var username = user.dataValues.username;
       var pwd = user.dataValues.password;
-      console.log('username: ',username);
-      console.log('password: ', pwd);
-      bcrypt.compareAsync(password, pwd)
-        .then(function(err, result) {
+      return bcrypt.compareAsync(password, pwd)
+        .then(function(result) {
+          console.log('Result of compareAsync is', result);
           return result;
         });
-});
+  })
+  .catch(function(err) {
+    console.log('err in checkPassword', err)
+  })
 };
 
 function hashPassword (username, password) {
-  console.log('Inside hashPassword. Username  is ', username);
-  console.log('Inside hashPassword. Passowrd is ', password);
   return bcrypt.genSaltAsync(8)
     .then(function(salt) {
-      console.log('crypting shit yo');
-      return salt;
-    })
-    .then(function(salt) {
-      console.log('salt is: ', salt);
       return bcrypt.hashAsync(password, salt);
     })
     .then(function(hash) {
-      console.log('hash is: ', hash);
       return hash;
+    })
+    .catch(function(err){
+      throw new Error('Error in hashing password...', err);
     });
 }
-// function hashPassword (username, password) {
-//   return new Promise (function(resolve, reject) {
-//     bcrypt.genSaltAsync(8)
-//         .then(function(salt) {
-//           return bcrypt.hashAsync(password ,salt);
-//         })
-//         .then(function(hash) {
-//           return hash;
-//         })
-//         .catch(function(err){
-//           reject(err);
-//         });
-//   });
-// }
-
-// TODO: Write checkUsername function
-
-// TODO: Write to potential features
-          //Autocomplete feature to check valid usernames
-          //as prospective user is signing up (real-time data from db)
-
-// TODO: Write to notes. txt
-            //When reading source code, start with only the functions
-            //you're intending to use. Ignore complexity.
-
-            //Look at a library's usage history. If its issue history
-            //
-
-// module.exports.createUser = function (req, res, next) {
-//   var username = req.body.username;
-//   var password = req.body.password;
-
-//   console.log('')
-
-//   var userObj = {
-//     username  : username,
-//     password  : '',
-//     firstName : req.body.firstName,
-//     lastName  : req.body.lastName,
-//     email     : req.body.email
-//   };
-
-//   hashPassword(username, password)
-//           .then(function(hash){
-//             userObj.password = hash;
-//             Profile.create(userObj)
-//                    .then(function(user) {
-//                      req.login(user.dataValues, function(err) {
-//                        if(err) {
-//                          console.log('Error: ---', err);
-//                        }
-//                      });
-//                      res.send(200); //next()
-//                    });
-//           })
-//           .catch(function(err){
-//             console.log('Error: ',err);
-//             res.send(451);
-//           });
-// };
