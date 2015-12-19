@@ -9,7 +9,7 @@ ENV NPM_VERSION 3.5.2
 
 
 #Essential Packages
-RUN yum install -y epel-release vim wget make tar
+RUN yum install -y epel-release vim wget make tar bzip2 gcc gcc-c++
 
 #NVM Installation - uses version variables
 RUN wget -qO- https://raw.githubusercontent.com/creationix/nvm/v${NVM_VERSION}/install.sh | bash
@@ -23,4 +23,4 @@ RUN cd /src; npm install
 COPY ./src /src
 
 # Will run the actual service on the container, will drop into Node REPL
-CMD ["node", "server/server.js"] 
+CMD ["node", "/src/server/server.js"] 
