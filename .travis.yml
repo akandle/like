@@ -14,8 +14,8 @@ node_js:
 services:
   - postgresql
 before_script:
-  - adduser admin
-  - passwd admin test
+  - sudo adduser admin
+  - sudo passwd admin test
   - psql -c "create user admin with password 'test';" -U postgres
   - psql -c "create database likedb;" -U postgres
   - psql -c "grant all privileges on database likedb to admin;" -U postgre
