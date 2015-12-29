@@ -1,3 +1,4 @@
+/*jshint expr: true*/
 var expect = require('chai').expect;
 var sinon = require('sinon');
 var request = require('supertest');

@@ -7,8 +7,10 @@
     "test": "test"
   },
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start --single-run",
-    "lint": "jscs ./"
+    "test": "npm run back-test && npm run front-test",
+    "lint": "jscs ./",
+    "back-test": "./node_modules/mocha/bin/_mocha ./test/test.js",
+    "front-test": "./node_modules/karma/bin/karma start --single-run"
   },
   "pre-commit": "lint",
   "repository": {
