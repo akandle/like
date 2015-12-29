@@ -15,7 +15,7 @@ services:
   - postgresql
 before_script:
   - sudo adduser admin2
-  - sudo passwd admin2 test
+  - echo -e "test\ntest" | sudo passwd admin2 test
   - psql -c "create user admin2 with password 'test';" -U postgres
   - psql -c "create database likedb;" -U postgres
   - psql -c "grant all privileges on database likedb to admin2;" -U postgre
