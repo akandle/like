@@ -7,7 +7,7 @@ passport.use(new LocalStrategy(
   function(username, password, done) {
     var globalUser;
     util.getProfile(username, null)
-      .then(function(user) {
+      .then(function (user) {
         if ( user === null ) {
           return done( null, false, { message : 'Incorrect username' } );
         }
@@ -22,7 +22,7 @@ passport.use(new LocalStrategy(
           return done( null, globalUser);
         }
       })
-      .catch(function(err){
+      .catch(function (err) {
         if ( err ) {
           console.log('Error in LocalStrategy', err);
           return err;
@@ -30,7 +30,7 @@ passport.use(new LocalStrategy(
       });
     }));
 
-passport.serializeUser(function(user, callback) {
+passport.serializeUser(function (user, callback) {
   callback(null, user.id);
 });
 
@@ -39,29 +39,9 @@ passport.deserializeUser(function(id, cb) {
     .then(function(user, err) {
       cb(null, user);
     })
-    .catch(function(err) {
-      console.log('Deserializing error: ',err);
+    .catch(function (err) {
+      console.log('Deserializing error: ', err);
     });
 });
 
 module.exports = passport;
-
-// passport.use(new LocalStrategy(
-//   function(username, password, done) {
-//     User.find({where:{username : username}})
-//         .then(function(user, err) {
-//             if ( err ) {
-//               console.log('Error');
-//               return err;
-//             }
-//             if ( !user ) {
-//               console.log('no user found');
-//               return done( null, false, { message : 'Incorrect username' } );
-//             }
-//             if (util.checkPassword( username, password )) {
-//               return done( null, false, { message : 'Incorrect password.'});
-//             }
-//             return done( null, user );
-//          });
-//   }
-//  ));

@@ -11,8 +11,8 @@ module.exports.authenticateUser = function (req, res, next, passport) {
     } else if (err) {
       res.send(405);
     } else {
-      req.login(user.dataValues, function(err) {
-        if(err) {
+      req.login(user.dataValues, function (err) {
+        if (err) {
           console.log('Error: ---', err);
           res.status(401).send(err);
         }
@@ -22,7 +22,7 @@ module.exports.authenticateUser = function (req, res, next, passport) {
   })(req, res, next);
 };
 
-module.exports.isAuthorized = function(req, res, next){
+module.exports.isAuthorized = function (req, res, next) {
   if (req.isAuthenticated()) {
     next();
   } else {
@@ -55,7 +55,7 @@ module.exports.checkUsername = function (req, res, next) {
         res.sendStatus(451);
       }
     })
-    .catch(function(err){
+    .catch(function (err) {
       res.sendStatus(451);
     });
 };
@@ -65,11 +65,11 @@ module.exports.createUser = function (req, res) {
   var password = req.body.password;
 
   var userObj = {
-    username  : username,
-    password  : password,
+    username : username,
+    password : password,
     firstName : req.body.firstName,
-    lastName  : req.body.lastName,
-    email     : req.body.email
+    lastName : req.body.lastName,
+    email : req.body.email
   };
 
   module.exports.hashPassword(username, password)
@@ -83,16 +83,16 @@ module.exports.createUser = function (req, res) {
           return user;
         });
     })
-    .then(function(user) {
-      req.login(user.dataValues, function(err) {
-        if(err) {
+    .then(function (user) {
+      req.login(user.dataValues, function (err) {
+        if (err) {
           throw new Error('Error in logging in user...', err);
         }
       });
       res.sendStatus(200);
     })
-    .catch(function(err){
-      console.log('Error in creating User... ',err);
+    .catch(function (err) {
+      console.log('Error in creating User... ', err);
       res.send(451);
     });
 };
@@ -158,25 +158,25 @@ module.exports.checkPassword = function(id, password) {
       var username = user.dataValues.username;
       var pwd = user.dataValues.password;
       return bcrypt.compareAsync(password, pwd)
-        .then(function(result) {
+        .then(function (result) {
           return result;
         });
   })
-  .catch(function(err) {
+  .catch(function (err) {
     console.log('err in checkPassword', err);
   });
 };
 
 module.exports.hashPassword = function (username, password) {
   return bcrypt.genSaltAsync(8)
-    .then(function(salt) {
+    .then(function (salt) {
       console.log('Salt baby---------------', salt);
       return bcrypt.hashAsync(password, salt);
     })
-    .then(function(hash) {
+    .then(function (hash) {
       return hash;
     })
-    .catch(function(err){
+    .catch(function (err) {
       throw new Error('Error in hashing password...', err);
     });
 };

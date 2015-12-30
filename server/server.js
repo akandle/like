@@ -14,26 +14,27 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(body_parser.urlencoded({extended : true}));
 app.use(body_parser.json());
-app.use(expressSession({ secret: 'ABS', cookie: {}}));
+app.use(expressSession({ secret: 'ABS',
+                         cookie: {}}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static('public'));
 
 //////////////////////// API Endpoints ////////////////////////////
 
-app.post('/api/signin', function(req, res, next) {
+app.post('/api/signin', function (req, res, next) {
   util.authenticateUser(req, res, next, passport);
   //should check and see if user even exit
   //should return private profile on successful login
 });
 
 //TODO : add more to route, only checking to see if user is authenticated
-app.get('/api/browse', util.isAuthorized, function(req, res) {
+app.get('/api/browse', util.isAuthorized, function (req, res) {
   util.getAllProfiles()
-      .then(function(users){
+      .then(function (users) {
         res.status(200).send(users);
       })
-      .catch(function(err){
+      .catch(function (err) {
         console.log('Error in api/browse', err);
         res.sendStatus(404);
       });
@@ -46,6 +47,7 @@ app.put('/api/profile/', util.isAuthorized, util.updateUser);
 app.delete('/api/profile/', util.isAuthorized, util.deleteUser);
 
 app.post('/api/profile/:id', util.isAuthorized, util.isVoted, util.createOrUpdateVote);
+
 
 app.get('/api/profile/:id', util.isAuthorized, util.isVoted, function (req, res) {
   profileID = req.params.id;
@@ -68,7 +70,7 @@ app.get('/api/profile/:id', util.isAuthorized, util.isVoted, function (req, res)
   // This should send public profile
 });
 
-app.use('/', function( req, res ){
+app.use('/', function ( req, res ) {
   console.log('at root');
   res.sendStatus(200);
 });

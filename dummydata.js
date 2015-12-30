@@ -9,14 +9,14 @@ User.create({ username : 'John',
 
 
 User.findAll({ attributes : ['id', 'username']})
-                .then(function(users){
+                .then(function (users) {
                   var profiles = [];;
-                  for(var i =0; i < users.length; i++ ) {
-                    profiles.push(users[i].dataValues)
+                  for (var i = 0; i < users.length; i++ ) {
+                    profiles.push(users[i].dataValues);
                   }
                   console.log(profiles);
                 })
-                .catch(function(err) {
+                .catch(function (err) {
                   console.log(err);
                 });
 
@@ -48,7 +48,7 @@ User.findAll({ attributes : ['id', 'username']})
 //     lastNames.push(last_name);
 //     emails.push(firstNames + '@' + domain);
 //     usernames.push(first_name + '' + ((j+1)*(i*5-5)));
-//     passwords.push('test' + (j*i + 1)); 
+//     passwords.push('test' + (j*i + 1));
 //   }
 // }
 

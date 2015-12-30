@@ -12,17 +12,17 @@ var voteModel = require('../../server/models/voteModel');
 console.log('==============Adding user: John, with pass "test" ==================');
 
 //Wait 30 seconds
-var testUser = function() {
+var testUser = function () {
   var passHash = bcrypt.hashSync('test', 8);
 
   Profile
     .create({ username : 'John',
-              password: passHash})
-    .then(function(user) {
+              password : passHash})
+    .then(function (user) {
       return console.log('USER IS THIS NOW: ', user);
 
     })
-    .catch(function(err) {
+    .catch(function (err) {
       console.log('error: ', err);
     });
 };

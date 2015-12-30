@@ -15,27 +15,30 @@ var theAccount = {
 //TODO pending tests for logged users for browse and vote
 
 
-describe('Authentication', function() {
+describe('Authentication', function () {
   describe('Log In', function () {
     it('should return a 200 on succesful signin', function (done) {
         request(server)
           .post('/api/signin')
-          .send({username: 'John', password: 'test'})
+          .send( {username: 'John',
+                  password: 'test'})
           .expect(200, done); //TODO: Add in check of return value
     });
 
     it('should return a 302 (redirection) on signin failure', function (done) {
         request(server)
           .post('/api/signin')
-          .send({username: 'Nottoday', password: 'test'})
+          .send( {username: 'Nottoday',
+                  password: 'test'})
           .expect(302, done); //TODO: Add in check of return value
     });
 
     it('should create new session', function (done) { //TODO: Login and get browse, logout and get browse, unlogged in ever get browse
       request(server)
         .post('/api/signin')
-        .send({username: 'John', password: 'test'})
-        .end(function(err, res) {
+        .send( {username: 'John',
+                password: 'test'})
+        .end(function (err, res) {
           // console.log('RESPONSE IS: ', res.headers);
           expect(res.headers['set-cookie']).to.exist;
           done();
@@ -55,8 +58,9 @@ describe('Authentication', function() {
       var agent = request.agent(server);
       agent
         .post('/api/signin')
-        .send({username: 'John', password: 'test'})
-        .end(function(err, res) {
+        .send( {username: 'John',
+                password: 'test'})
+        .end(function (err, res) {
           console.log('signed in');
           agent
             .get('/api/browse')
@@ -74,8 +78,9 @@ describe('Authentication', function() {
       var agent = request.agent(server);
       agent
       .post('/api/signin')
-      .send({username: 'John', password: 'test'})
-      .end(function(err, res) {
+      .send( {username: 'John',
+              password: 'test'})
+      .end(function (err, res) {
         console.log('signed in');
         agent
           .post('/api/vote')
@@ -84,18 +89,18 @@ describe('Authentication', function() {
     });
   });
 
-  describe('Create User', function() {
+  describe('Create User', function () {
     this.timeout(5000);
     afterEach(function (done) {
       Profile.destroy({where: {username: 'Bob12'}})
-             .catch(function(err) {
+             .catch(function (err) {
               console.log('Create Spec error: ', err);
              });
      Profile.destroy({where: {username: 'Frank12'}})
-            .then(function() {
+            .then(function () {
               done();
             })
-            .catch(function(err) {
+            .catch(function (err) {
              console.log('Create Spec error: ', err);
             });
 
@@ -113,24 +118,24 @@ describe('Authentication', function() {
       request(server)
         .post('/api/profile/create')
         .send(userA)
-        .end(function(err, res) {
+        .end(function (err, res) {
           console.log('Error in adding user to db: ', err);
         return Profile.find({where : {username: 'Bob12'}})
-               .then(function(user) {
+               .then(function (user) {
                 console.log('user found');
                  expect(user.dataValues.username).to.equal('Bob12');
                  expect(user.dataValues.firstName).to.equal('Bobbsky');
                  expect(user.dataValues.lastName).to.equal('Fremont');
                  done();
                })
-               .catch(function(err) {
+               .catch(function (err) {
                 console.log('Error is here:      ', err);
                });
         });
         // done();
     });
 
-    it('should not allow for non-unique username', function(done) {
+    it('should not allow for non-unique username', function (done) {
       var userB = {
         username: 'Frank12',
         password: 'test2',
@@ -140,7 +145,7 @@ describe('Authentication', function() {
       };
 
       Profile.create(userB)
-        .then(function() {
+        .then(function () {
           request(server)
                 .post('/api/profile/create')
                 .send(userB)
