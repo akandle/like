@@ -1,12 +1,12 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var User = require('../models/profileModel');
-var util = require('../Utilities/utilities')
+var util = require('../Utilities/utilities');
 
 passport.use(new LocalStrategy(
-  function(username, password, done) {
+  function (username, password, done) {
     util.getProfile(username, null)
-      .then(function(user) {
+      .then(function (user) {
         if ( user === null ) {
           return done( null, false, { message : 'Incorrect username' } );
         } else if (!util.checkPassword( username, password )) {
@@ -15,7 +15,7 @@ passport.use(new LocalStrategy(
           return done( null, user );
         }
       })
-      .catch(function(err){
+      .catch(function (err) {
         if ( err ) {
           console.log('Error in LocalStrategy', err);
           return err;
@@ -24,17 +24,17 @@ passport.use(new LocalStrategy(
   }
 ));
 
-passport.serializeUser(function(user, callback) {
+passport.serializeUser(function (user, callback) {
   callback(null, user.id);
 });
 
-passport.deserializeUser(function(id, cb) {
+passport.deserializeUser(function (id, cb) {
   User.findById(id)
-    .then(function(user, err) {
+    .then(function (user, err) {
       cb(null, user);
     })
-    .catch(function(err) {
-      console.log('Deserializing error: ',err);
+    .catch(function (err) {
+      console.log('Deserializing error: ', err);
     });
 });
 

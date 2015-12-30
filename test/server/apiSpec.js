@@ -5,14 +5,15 @@ var request = require('supertest');
 var server = require('../../server/server.js');
 
 //Special login procedure allowing the passing of sessions id through cookies
-var logIn = function(callback, done) {
+var logIn = function (callback, done) {
   var agent = request.agent(server);
 
   agent
     .post('/api/signin')
-    .send({username: 'John', password: 'test'})
+    .send( {username: 'John',
+            password: 'test'})
     .end(function (err, res) {
-      if(err) {
+      if (err) {
         done(err);
       } else {
         callback(agent, res);
@@ -22,7 +23,7 @@ var logIn = function(callback, done) {
 };
 
 describe('API - Vote', function () {
-  it('Should return 200 when posting to /api/vote, while logged in', function(done) {
+  it('Should return 200 when posting to /api/vote, while logged in', function (done) {
     var checkingAuthorization = function (agent, res) {
       console.log('Accessing secured resources while signed into service');
       agent
@@ -38,7 +39,7 @@ describe('API - Vote', function () {
     request(server)
       .post('/api/vote')
       .end(function (err, res) {
-        if(err) {
+        if (err) {
           console.log('Error in test: ', err);
         } else {
           expect(res.statusCode).to.equal(401);
@@ -51,16 +52,16 @@ describe('API - Vote', function () {
   });
 });
 
-describe('API - Profile', function() {
+describe('API - Profile', function () {
   describe('GET api/profile/:id', function () {
     it('should respond with a profile object and a 200 status when logged in', function (done) {
-      var retrieveProfile = function(agent, res) {
+      var retrieveProfile = function (agent, res) {
         console.log('Accessing profile by ID while signed into service');
         expect(res.statusCode).to.equal(200);
         agent
           .get('/api/profile/1')
-          .end(function(err, res) {
-            if(err) {
+          .end(function (err, res) {
+            if (err) {
               console.log('Error in test: ', err);
             } else {
               expect(res.statusCode).to.equal(200);
@@ -74,13 +75,13 @@ describe('API - Profile', function() {
     });
 
     it('should respond with 404 and no profile object for unknown user when logged in', function (done) {
-      var retrieveProfile = function(agent, res) {
+      var retrieveProfile = function (agent, res) {
         console.log('Accessing profile by ID while signed into service');
         expect(res.statusCode).to.equal(200);
         agent
           .get('/api/profile/1000')
-          .end(function(err, res) {
-            if(err) {
+          .end(function (err, res) {
+            if (err) {
               console.log('Error in test: ', err);
             } else {
               expect(res.statusCode).to.equal(404);
@@ -94,11 +95,11 @@ describe('API - Profile', function() {
       logIn(retrieveProfile, done);
     });
 
-    it('Should respond with a 401 when POST/GET api/profile/anyid# when not logged in', function(done) {
+    it('Should respond with a 401 when POST/GET api/profile/anyid# when not logged in', function (done) {
       request(server)
         .get('/api/profile/1')
         .end(function (err, res) {
-          if(err) {
+          if (err) {
             console.log('Error in test: ', err);
           } else {
             expect(res.statusCode).to.equal(401);
@@ -113,13 +114,13 @@ describe('API - Profile', function() {
   describe('API - Browse', function () {
 
     it('should respond with a list of profile IDs and a 200 status when logged in', function (done) {
-      var retrieveProfile = function(agent, res) {
+      var retrieveProfile = function (agent, res) {
         console.log('Accessing browse while signed into service');
         expect(res.statusCode).to.equal(200);
         agent
           .get('/api/browse')
-          .end(function(err, res) {
-            if(err) {
+          .end(function (err, res) {
+            if (err) {
               console.log('Error in test: ', err);
             } else {
               expect(res.statusCode).to.equal(200);
@@ -131,7 +132,7 @@ describe('API - Profile', function() {
       logIn(retrieveProfile, done);
     });
 
-    it('Should respond with a 401 when GET request sent to api/browse when not logged in', function(done) {
+    it('Should respond with a 401 when GET request sent to api/browse when not logged in', function (done) {
       request(server)
         .get('/api/browse')
         .expect(401, done);
