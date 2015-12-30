@@ -41,3 +41,5 @@ describe('DB Models', function () {
   });
 
 });
+
+console.log("DB Spec End +++++++++++++++++++++++++++++++++++++++++++++++++++++");
