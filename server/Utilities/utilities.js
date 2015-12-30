@@ -9,7 +9,7 @@ module.exports.authenticateUser = function (req, res, next, passport) {
     if(user === false) {
       res.sendStatus(404);
     } else if (err) {
-      res.send(404);
+      res.send(405);
     } else {
       req.login(user.dataValues, function(err) {
         if(err) {
