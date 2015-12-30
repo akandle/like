@@ -15,8 +15,8 @@ services:
   - postgresql
 before_script:
   - psql -c "create database likedb;" -U postgres
+  - node ./test/server/dbSetup.js
   - sleep 15
-  - 
 script:
   - npm test
 
