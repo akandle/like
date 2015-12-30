@@ -11,6 +11,6 @@ var Trait = db.define('trait', {
 });
 
 //TODO: create relationships before running sync
-Trait.sync({force: true});
+Trait.sync();
 
 module.exports = Trait;

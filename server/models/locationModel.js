@@ -11,6 +11,6 @@ var Loc = db.define('loc', {
 });
 
 //TODO: create relationships before running sync
-Loc.sync({force: true});
+Loc.sync();
 
 module.exports = Loc;

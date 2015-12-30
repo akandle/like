@@ -11,6 +11,6 @@ var Vote = db.define('vote', {
 });
 
 //TODO: create relationships before running sync
-Vote.sync({force: true});
+Vote.sync();
 
 module.exports = Vote;
