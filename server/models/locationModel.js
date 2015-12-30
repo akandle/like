@@ -13,4 +13,5 @@
 // //TODO: create relationships before running sync
 // Loc.sync({force: true});
 
+
 // module.exports = Loc;
