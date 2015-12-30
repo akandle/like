@@ -154,6 +154,7 @@ module.exports.deleteUser = function (req, res, next) {
 module.exports.checkPassword = function(id, password) {
   return this.getProfile(null, id)
     .then(function(user){
+      console.log('USER IS FOUND_______________', user);
       var username = user.dataValues.username;
       var pwd = user.dataValues.password;
       return bcrypt.compareAsync(password, pwd)
@@ -169,6 +170,7 @@ module.exports.checkPassword = function(id, password) {
 module.exports.hashPassword = function (username, password) {
   return bcrypt.genSaltAsync(8)
     .then(function(salt) {
+      console.log('Salt baby---------------', salt);
       return bcrypt.hashAsync(password, salt);
     })
     .then(function(hash) {
