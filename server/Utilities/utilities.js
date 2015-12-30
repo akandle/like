@@ -123,6 +123,7 @@ module.exports.getAllProfiles = function () {
 module.exports.checkPassword = function(username, password) {
   return this.getProfile(username, null)
     .then(function(user){
+      console.log('USER IS FOUND_______________', user);
       var username = user.dataValues.username;
       var pwd = user.dataValues.password;
       return bcrypt.compareAsync(password, pwd)
@@ -138,6 +139,7 @@ module.exports.checkPassword = function(username, password) {
 function hashPassword (username, password) {
   return bcrypt.genSaltAsync(8)
     .then(function(salt) {
+      console.log('Salt baby---------------', salt);
       return bcrypt.hashAsync(password, salt);
     })
     .then(function(hash) {

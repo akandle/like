@@ -14,3 +14,5 @@ var passHash = bcrypt.hashSync('test', 8);
 
 Profile.create({ username : 'John',
               password: passHash});
+
+console.log('USER IS: +=+=+=+=+=+= ',Profile.find({where: {username: username}}));
