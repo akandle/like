@@ -1,6 +1,7 @@
 var db = require('../../DB/db.js');
 var Sequelize = require('sequelize');
 
+//TODO: Documentation
 var Trait = db.define('trait', {
   traitName: {
     type: Sequelize.STRING,

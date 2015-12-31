@@ -1,6 +1,7 @@
 var db = require('../../DB/db.js');
 var Sequelize = require('sequelize');
 
+//TODO: Documentation?
 var Vote = db.define('vote', {
   voteDirection: {
     type: Sequelize.BOOLEAN,

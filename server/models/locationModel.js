@@ -1,6 +1,7 @@
 var db = require('../../DB/db.js');
 var Sequelize = require('sequelize');
 
+//TODO: Documentation?
 var Loc = db.define('loc', {
   locName: {
     type: Sequelize.STRING,
