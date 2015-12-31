@@ -177,7 +177,7 @@ describe('API - Profile', function () {
           });
       };
 
-      logIn(updateProfile, done);
+      logIn(deleteProfile, done);
     });
   });
 });
