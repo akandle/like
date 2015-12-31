@@ -162,7 +162,7 @@ describe('API - Profile', function () {
   });
 
   describe('API - Delete user', function () {
-    it ('should update a user\'s profile on a put request to api/profile', function (done) {
+    it ('should delete a user\'s profile on a delete to api/profile', function (done) {
       var deleteProfile = function (agent, res) {
         console.log('In delete profile spec, ');
         expect(res.statusCode).to.equal(200);
