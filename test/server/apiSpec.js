@@ -139,5 +139,46 @@ describe('API - Profile', function () {
       });
 
   });
+
+  describe('API - Update user', function () {
+    it ('should update a user\'s profile on a put request to api/profile', function (done) {
+      var updateProfile = function (agent, res) {
+        console.log('In update profile spec, ');
+        expect(res.statusCode).to.equal(200);
+        agent
+          .put('/api/profile/')
+          .send({ username : 'Johnny' })
+          .end(function (err, res) {
+            if (err) {
+              console.log('Error in test: ', err);
+            } else {
+              expect(res.statusCode).to.equal(200);
+            }
+          });
+      };
+
+      logIn(updateProfile, done);
+    });
+  });
+
+  describe('API - Delete user', function () {
+    it ('should update a user\'s profile on a put request to api/profile', function (done) {
+      var deleteProfile = function (agent, res) {
+        console.log('In delete profile spec, ');
+        expect(res.statusCode).to.equal(200);
+        agent
+          .delete('/api/profile/')
+          .end(function (err, res) {
+            if (err) {
+              console.log('Error in test: ', err);
+            } else {
+              expect(res.statusCode).to.equal(200);
+            }
+          });
+      };
+
+      logIn(updateProfile, done);
+    });
+  });
 });
 console.log("API Spec END +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
