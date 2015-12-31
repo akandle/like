@@ -8,8 +8,9 @@ var util = require('./Utilities/utilities');
 var app = express();
 
 
-/////////////////// Serving Assets | Configuring MiddleWare //////////////////
+/////////////////// Middleware //////////////////
 
+//TODO: Make morgan reporting more robust, pipe to logger
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(body_parser.urlencoded({extended : true}));
@@ -22,6 +23,7 @@ app.use(express.static('public'));
 
 //////////////////////// API Endpoints ////////////////////////////
 
+//TODO: Must log signins
 app.post('/api/signin', function (req, res, next) {
   util.authenticateUser(req, res, next, passport);
   //should check and see if user even exit
@@ -29,6 +31,7 @@ app.post('/api/signin', function (req, res, next) {
 });
 
 //TODO : add more to route, only checking to see if user is authenticated
+//TODO: Move this to an outside route handler
 app.get('/api/browse', util.isAuthorized, function (req, res) {
   util.getAllProfiles()
       .then(function (users) {
@@ -68,13 +71,16 @@ app.get('/api/profile/:id', util.isAuthorized, util.isVoted, function (req, res)
       });
   // Just return the user object associated with id
   // This should send public profile
+  // TODO: What?
 });
 
+//TODO: WTF is this?
 app.use('/', function ( req, res ) {
   console.log('at root');
   res.sendStatus(200);
 });
 
+//TODO: A little more info would be nice
 //Server SetUp
 app.listen(3333);
 module.exports = app;

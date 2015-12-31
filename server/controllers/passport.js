@@ -3,6 +3,13 @@ var LocalStrategy = require('passport-local').Strategy;
 var db = require('../models/schema');
 var util = require('../Utilities/utilities');
 
+/**
+ * Configuration for Passport local strategy
+ * @param  {String} username
+ * @param  {String} password
+ * @param  {Function} done Used in passport to determine if authenticated
+ * @return          Returns result of done, depending on if user is authenticated
+ */
 passport.use(new LocalStrategy(
   function(username, password, done) {
     var globalUser;
@@ -24,12 +31,18 @@ passport.use(new LocalStrategy(
       })
       .catch(function (err) {
         if ( err ) {
+          //TODO: Logger
           console.log('Error in LocalStrategy', err);
           return err;
         }
       });
     }));
 
+/**
+ * Serialize user object into local session object
+ * @param  {Object} user      User Object
+ * @param  {function} callback Injected by Passport, args determine how user object serialized
+ */
 passport.serializeUser(function (user, callback) {
   callback(null, user.id);
 });
@@ -40,6 +53,7 @@ passport.deserializeUser(function(id, cb) {
       cb(null, user);
     })
     .catch(function (err) {
+      //TODO: Logger
       console.log('Deserializing error: ', err);
     });
 });

@@ -4,6 +4,14 @@ var db = require('../models/schema');
 var update = require('./update');
 
 ///////////// Authentication Related Utilities //////////////
+
+/**
+ * authenticates the user using local strategy
+ * @param  {Object}   req      Request Object
+ * @param  {Object}   res      Response Object
+ * @param  {Function} next     Not used in this instance
+ * @param  {Object}   passport Configured Passport Object
+ */
 module.exports.authenticateUser = function (req, res, next, passport) {
   passport.authenticate('local', function( err, user, info ) {
     if(user === false) {
@@ -13,6 +21,7 @@ module.exports.authenticateUser = function (req, res, next, passport) {
     } else {
       req.login(user.dataValues, function (err) {
         if (err) {
+          //TODO: Logger
           console.log('Error: ---', err);
           res.status(401).send(err);
         }
@@ -22,6 +31,12 @@ module.exports.authenticateUser = function (req, res, next, passport) {
   })(req, res, next);
 };
 
+/**
+ * Middleware to check authenticated status. Sends unauthorized(401) if not logged in.
+ * @param  {Object}   req  Request Object
+ * @param  {Object}   res  Response Object
+ * @param  {Function} next If authorized, pass to route handler
+ */
 module.exports.isAuthorized = function (req, res, next) {
   if (req.isAuthenticated()) {
     next();
@@ -32,6 +47,13 @@ module.exports.isAuthorized = function (req, res, next) {
 
 
 ////////////////// User Related Utilities //////////////////
+/**
+ * Retrieves profile based on username or ID
+ * @param  {String} usernam
+ * @param  {Number} userid
+ * @param  {Boolean} privy    Used to determine the type of profile to return
+ * @return {Object}          User Model instance
+ */
 module.exports.getProfile = function (username, userid, privy) {
   if (privy) {
     return db.Profile.find({ where : { id : userid }});
@@ -45,6 +67,12 @@ module.exports.getProfile = function (username, userid, privy) {
   }
 };
 
+/**
+ * Middleware to check if username is valid
+ * @param  {Object}   req  Request Object
+ * @param  {Object}   res  Response Object
+ * @param  {Function} next Will pass through to route handler if name valid
+ */
 module.exports.checkUsername = function (req, res, next) {
   var username = req.body.username;
   db.Profile.find({ where: { username : username }})
@@ -60,7 +88,13 @@ module.exports.checkUsername = function (req, res, next) {
     });
 };
 
+/**
+ * Creates a new User Model instance and stores in DB
+ * @param  {Object} req Request Object
+ * @param  {Object} res Response Object
+ */
 module.exports.createUser = function (req, res) {
+  //TODO: Need logging here
   var username = req.body.username;
   var password = req.body.password;
 
@@ -86,24 +120,37 @@ module.exports.createUser = function (req, res) {
     .then(function (user) {
       req.login(user.dataValues, function (err) {
         if (err) {
+          //TODO: Logger
           throw new Error('Error in logging in user...', err);
         }
       });
       res.sendStatus(200);
     })
     .catch(function (err) {
+      //TODO: Logger
       console.log('Error in creating User... ', err);
       res.send(451);
     });
 };
 
+/**
+ * Logout User and destroy session
+ * @param  {Object}   req  Request Object
+ * @param  {Object}   res  Response Object
+ * @param  {Function} next not used
+ */
 module.exports.signUserOut = function (req, res, next) {
-  // To remove req.user and destroy the passport session
+  //TODO: Log this
   req.logout();
   req.session.destroy();
+  //TODO: Change this
   res.redirect('http://www.google.com');
 };
 
+/**
+ * Retrieve list of all user ids
+ * @return {array} Array of all user ids
+ */
 module.exports.getAllProfiles = function () {
   return db.Profile
           .findAll({ attributes : ['id', 'username']})
@@ -163,20 +210,22 @@ module.exports.checkPassword = function(id, password) {
         });
   })
   .catch(function (err) {
+    //TODO: Logger
     console.log('err in checkPassword', err);
   });
 };
 
+
 module.exports.hashPassword = function (username, password) {
   return bcrypt.genSaltAsync(8)
     .then(function (salt) {
-      console.log('Salt baby---------------', salt);
       return bcrypt.hashAsync(password, salt);
     })
     .then(function (hash) {
       return hash;
     })
     .catch(function (err) {
+      //TODO: Logger
       throw new Error('Error in hashing password...', err);
     });
 };
